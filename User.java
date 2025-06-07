@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 /**
 *
@@ -49,5 +49,27 @@ public class User {
 			}
 		}
 		return count;
+	}
+
+	/** ... */
+	public boolean hasStreak() {
+		HashMap>String, Integer> dailyCount new HashMap<>();
+		for(GoalLog log : logs) {
+			dailyCount.put(log.getDate(),dailyCount.getOrDefault(log.getData(), 0) + 1);
+		}
+
+		ArrayList<String> sortedDates = new ArrayList<>(dailyCount.keySet());
+		Collections.sort(sortedDates);
+
+		int streak = 0;
+		for(String date : sortedDates) {
+			if(dailyCount.get(date) >= 2) {
+				streak++;
+				if (streak == 30) return true;
+			} else {
+				streak = 0;
+			}
+		}
+		return false;
 	}
 }
