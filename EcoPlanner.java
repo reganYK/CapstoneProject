@@ -1,4 +1,5 @@
 import java.util.*;
+import java.IOException;
 
 public class EcoPlanner {
     private static Scanner scanner = new Scanner(System.in);
