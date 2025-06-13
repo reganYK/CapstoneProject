@@ -13,25 +13,30 @@ public class EcoPlanner {
         String name = scanner.nextLine();
         currentUser = new User(name);
 
-        ArrayList<GoalLog> savedLogs = FileManager.loadLogs("logs.txt", new ArrayList<>(predefinedGoals));
-        for (GoalLog log : savedLogs) {
+	ArrayList<Goal> allKnownGoalsForLoading = new ArrayList<>(predefinedGoals);
+        ArrayList<GoalLog> savedLogs = FileManager.loadLogs("logs.txt", allKnownGoalsForLoading);        
+	for (GoalLog log : savedLogs) {
             currentUser.logGoalCompletion(log.getGoal(), log.getDate());
         }
 
         boolean running = true;
         while (running) {
             showMenu();
-            int choice = Integer.parseInt(scanner.nextLine());
-            switch (choice) {
-                case 1: showAllGoals(); break;
-                case 2: logGoal(); break;
-                case 3: showLogs(); break;
-                case 4: running = false; break;
-                default: System.out.println("Invalid choice.");
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1: showAllGoals(); break;
+                    case 2: logGoal(); break;
+                    case 3: showLogs(); break;
+                    case 4: running = false; break;
+                    default: System.out.println("Invalid choice. Please enter a number between 1 and 4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
         }
-
         System.out.println("Thanks for using EcoPlanner!");
+	scanner.close();
     }
 
     private static void setupPredefinedGoals() {
@@ -63,20 +68,25 @@ public class EcoPlanner {
     private static void logGoal() {
         showAllGoals();
         System.out.print("Select goal number to log: ");
-        int index = Integer.parseInt(scanner.nextLine()) - 1;
-        if (index >= 0 && index < predefinedGoals.size()) {
-            System.out.print("Enter today's date (YYYY-MM-DD): ");
-            String date = scanner.nextLine();
-            currentUser.logGoalCompletion(predefinedGoals.get(index), date);
-            FileManager.saveLogs("logs.txt", currentUser.getLogs());
+        try {
+            int index = Integer.parseInt(scanner.nextLine()) - 1;
+            if (index >= 0 && index < predefinedGoals.size()) {
+                System.out.print("Enter today's date (YYYY-MM-DD): ");
+                String date = scanner.nextLine();
 
-            if (currentUser.hasStreak()) {
-                System.out.println("Congratulations! You've completed a 30-day streak! A tree will be planted under your name!");
+                currentUser.logGoalCompletion(predefinedGoals.get(index), date);
+                FileManager.saveLogs("logs.txt", currentUser.getLogs());
+
+                if (currentUser.hasStreak()) {
+                    System.out.println("Congratulations! You've completed a 30-day streak! A tree will be planted under your name!");
+                } else {
+                    System.out.println("Goal logged successfully.");
+                }
             } else {
-                System.out.println("Goal logged successfully.");
+                System.out.println("Invalid goal number. Please select a number from the list.");
             }
-        } else {
-            System.out.println("Invalid goal number.");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
         }
     }
 
