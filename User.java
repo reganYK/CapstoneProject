@@ -35,7 +35,7 @@ public class User {
         * @param goal the completed goal
 	* @param date it was completed
   	*/
-	public void logGoalCompleteion(Goal goal, String date) {
+	public void logGoalCompletion(Goal goal, String date) {
 		logs.add(new GoalLog(goal, date));
 	}
 
