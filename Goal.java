@@ -39,7 +39,7 @@ public class Goal {
  	* Updates the name of the goal.
      	* @param name new name for the goal
   	*/
-	public void setName() {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -47,7 +47,7 @@ public class Goal {
  	* Updates the description of the goal.
      	* @param description new description for the goal
   	*/
-	public void setDescription() {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
