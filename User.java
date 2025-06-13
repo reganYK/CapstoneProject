@@ -76,28 +76,48 @@ public class User {
 	}
 
 	/**
- 	* Checks if the user has completed at least 2 goals per day for 30 consecutive days.
-  	* Used to determine if a tree should be planted under the user's name.
-     	* @return true if 30-day streak is reached, false otherwise
-  	*/
-	public boolean hasStreak() {
-		HashMap>String, Integer> dailyCount new HashMap<>();
-		for(GoalLog log : logs) {
-			dailyCount.put(log.getDate(),dailyCount.getOrDefault(log.getData(), 0) + 1);
-		}
+ * Checks if the user has completed at least 2 goals per day for 30 consecutive days.
+ * Used to determine if a tree should be planted under the user's name.
+ * This version does not use a HashMap — only basic structures.
+ * 
+ * @return true if 30-day streak is reached, false otherwise
+ */
+public boolean hasStreak() {
+	List<String> allDates = new ArrayList<>();
 
-		ArrayList<String> sortedDates = new ArrayList<>(dailyCount.keySet());
-		Collections.sort(sortedDates);
-
-		int streak = 0;
-		for(String date : sortedDates) {
-			if(dailyCount.get(date) >= 2) {
-				streak++;
-				if (streak == 30) return true;
-			} else {
-				streak = 0;
-			}
-		}
-		return false;
+	// Collect all log dates
+	for (GoalLog log : logs) {
+		allDates.add(log.getDate());
 	}
+
+	// Sort the dates
+	Collections.sort(allDates);
+
+	// Remove duplicates and count how many goals were completed per day
+	List<String> uniqueDates = new ArrayList<>();
+	List<Integer> goalsPerDay = new ArrayList<>();
+
+	for (String date : allDates) {
+		if (!uniqueDates.contains(date)) {
+			uniqueDates.add(date);
+			goalsPerDay.add(1);
+		} else {
+			int index = uniqueDates.indexOf(date);
+			goalsPerDay.set(index, goalsPerDay.get(index) + 1);
+		}
+	}
+
+	// Check for a streak of 30 consecutive days with at least 2 goals per day
+	int streak = 0;
+	for (int i = 0; i < uniqueDates.size(); i++) {
+		if (goalsPerDay.get(i) >= 2) {
+			streak++;
+			if (streak == 30) return true;
+		} else {
+			streak = 0;
+		}
+	}
+
+	return false;
+}
 }
